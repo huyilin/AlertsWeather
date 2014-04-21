@@ -4,6 +4,7 @@ import codecs
 import urllib2
 import lxml.html
 import time
+import os
     
 class WeatherCrawl:
     #   city_list=['Osnabrück']
@@ -20,7 +21,6 @@ class WeatherCrawl:
         city_list=self.get_cities(self.city_file)
         for city in city_list:
             url=self.url_example.replace("example",city)
-            print url
             response=urllib2.urlopen(url)
             data=response.read()
             doc=lxml.html.document_fromstring(data)
@@ -32,7 +32,6 @@ class WeatherCrawl:
                     date=sub_direc.xpath('@day')
                     city[0]=city[0].replace(',',';')
                     output=city[0]+','+date[0]+','+weather[0]+'\n'
-                    print output
                     self.weather_file.write(output.encode('utf-8'))
         self.weather_file.close()
         
@@ -84,25 +83,28 @@ class TravelAlerts:
             alert=unit['city']+','+unit['date']+'alert=TravelAlerts(url,alert_file,city_file),'+unit['event']+'\n'
             alert=alert.encode('utf-8')
             self.alert_file.write(alert)
-            print alert
         self.alert_file.close()
 
-open('/home/yilin/workspace/server/alerts.csv','w').close()
-open('/home/yilin/workspace/server/weather.csv','w').close()
-# open('/export/home/team06/randomtrip/crawler/weather.csv','w').close()
-# open('/export/home/team06/randomtrip/crawler/alerts.csv','w').close()
+# open('/home/yilin/workspace/server/alerts.csv','w').close()
+# open('/home/yilin/workspace/server/weather.csv','w').close()
 
-city_file=codecs.open("/home/yilin/workspace/server/cities.txt","r","utf-8")
-# city_file=codecs.open("/export/home/team06/randomtrip/crawler/cities.txt","r","utf-8")
-
+dest_direc=os.getcwd()
+city_file=codecs.open(dest_direc+'/cities.txt',"r","utf-8") 
 url_example = 'http://api.openweathermap.org/data/2.5/forecast/daily?q=example&mode=xml&units=metric&cnt=7'
-weather_file=open('/home/yilin/workspace/server/weather.csv','a')
-# weather_file=open('/export/home/team06/randomtrip/crawler/weather.csv','a')
+
+open(dest_direc+'/weather.csv','w').close()
+open(dest_direc+'/alerts.csv','w').close()  #empty the csv files
+
+# city_file=codecs.open("/home/yilin/workspace/server/cities.txt","r","utf-8")
+# weather_file=open('/home/yilin/workspace/server/weather.csv','a')
+
+weather_file=open(dest_direc+'/weather.csv','a')
 weather=WeatherCrawl(url_example,weather_file,city_file)
 weather.parse()
-
+ 
 url = "http://wikitravel.org/en/Travel_news"
-# alert_file=open('/export/home/team06/randomtrip/crawler/alerts.csv','a')
-alert_file=open('/home/yilin/workspace/server/alerts.csv','a')
+alert_file=open(dest_direc+'/alerts.csv','a')
+# alert_file=open('/home/yilin/workspace/server/alerts.csv','a')
 alert=TravelAlerts(url,alert_file,city_file)
 alert.parse()
+# os.putenv("PATH",os.getenv("PATH")+path_csw)
