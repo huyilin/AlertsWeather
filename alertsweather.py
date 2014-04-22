@@ -7,7 +7,6 @@ import time
 import os
     
 class WeatherCrawl:
-    #   city_list=['Osnabrück']
     def __init__(self,url_example,weather_file,city_file):
         self.url_example=url_example
         self.weather_file=weather_file
@@ -85,9 +84,6 @@ class TravelAlerts:
             self.alert_file.write(alert)
         self.alert_file.close()
 
-# open('/home/yilin/workspace/server/alerts.csv','w').close()
-# open('/home/yilin/workspace/server/weather.csv','w').close()
-
 dest_direc=os.getcwd()
 city_file=codecs.open(dest_direc+'/cities.txt',"r","utf-8") 
 url_example = 'http://api.openweathermap.org/data/2.5/forecast/daily?q=example&mode=xml&units=metric&cnt=7'
@@ -95,16 +91,11 @@ url_example = 'http://api.openweathermap.org/data/2.5/forecast/daily?q=example&m
 open(dest_direc+'/weather.csv','w').close()
 open(dest_direc+'/alerts.csv','w').close()  #empty the csv files
 
-# city_file=codecs.open("/home/yilin/workspace/server/cities.txt","r","utf-8")
-# weather_file=open('/home/yilin/workspace/server/weather.csv','a')
-
 weather_file=open(dest_direc+'/weather.csv','a')
 weather=WeatherCrawl(url_example,weather_file,city_file)
 weather.parse()
  
 url = "http://wikitravel.org/en/Travel_news"
 alert_file=open(dest_direc+'/alerts.csv','a')
-# alert_file=open('/home/yilin/workspace/server/alerts.csv','a')
 alert=TravelAlerts(url,alert_file,city_file)
 alert.parse()
-# os.putenv("PATH",os.getenv("PATH")+path_csw)
